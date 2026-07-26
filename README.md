@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CADENCE Security Analytics
 
 CADENCE is a local-first behavioral security analytics workspace for analyzing
@@ -312,3 +313,7 @@ npm run build
   events when SHAP is available.
 - The application is an analytical prototype and should not be treated as an
   autonomous incident-response system.
+=======
+# Cadence
+CADENCE - Conformal Adaptive Detection &amp; Entity Context Engine
+>>>>>>> c543a776e8836488d1ffc23b5bd3255d3fe980ff
