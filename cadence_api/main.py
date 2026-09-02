@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import csv
 import io
+from pathlib import Path
 from typing import Any, Dict, Optional
 
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.staticfiles import StaticFiles
 
 from .csv_validation import MAX_FILE_BYTES, REQUIRED_COLUMNS, validate_csv_bytes
 from .models import ImportResponse, PaginatedResponse, RunCreate, RunResponse
@@ -26,6 +28,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+FRONTEND_DIST = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+FRONTEND_ASSETS = FRONTEND_DIST / "assets"
+
+if FRONTEND_ASSETS.exists():
+    app.mount("/assets", StaticFiles(directory=FRONTEND_ASSETS), name="assets")
 
 
 def completed_snapshot(run_id: str) -> Dict[str, Any]:
@@ -299,3 +307,20 @@ def get_telemetry(
 @app.get("/api/runs/{run_id}/models")
 def get_models(run_id: str) -> Dict[str, Any]:
     return completed_snapshot(run_id)["models"]
+
+
+@app.get("/{full_path:path}", include_in_schema=False)
+def serve_frontend(full_path: str) -> FileResponse:
+    if not FRONTEND_DIST.exists():
+        raise HTTPException(
+            status_code=503,
+            detail="Frontend assets are unavailable. Build the frontend before starting the app.",
+        )
+    candidate = (FRONTEND_DIST / full_path).resolve()
+    try:
+        candidate.relative_to(FRONTEND_DIST.resolve())
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail="Asset was not found.") from exc
+    if full_path and candidate.is_file():
+        return FileResponse(candidate)
+    return FileResponse(FRONTEND_DIST / "index.html")
