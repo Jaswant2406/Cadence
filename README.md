@@ -1,4 +1,13 @@
----
+ 🚀 Live Demo
+
+**CADENCE — Security Analytics API**
+
+Explore the deployed application and its API documentation.
+
+- 🌐 **Live Application:** [Open CADENCE](https://cadence-ik3o.onrender.com)
+- 📚 **API Documentation:** [Swagger UI](https://cadence-ik3o.onrender.com/docs)
+
+
 title: CADENCE Security Analytics
 emoji: shield
 colorFrom: slate
