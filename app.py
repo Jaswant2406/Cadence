@@ -1711,6 +1711,7 @@ class BackendEngine:
                 window_size=int(self.config["WINDOW_SIZE"]),
                 target_fpr=float(self.config["TARGET_FPR"]),
                 seed=int(self.config["SEED"]),
+                epochs=5,
             )
             self._execute_stage("gru_training", gru_model.fit, sequence_windows)
             gru_predictions = self._execute_stage("gru_inference", gru_model.predict, sequence_windows)
